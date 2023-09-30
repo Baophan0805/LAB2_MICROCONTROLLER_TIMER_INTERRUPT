@@ -45,7 +45,7 @@ TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN PV */
 const int MAX_LED = 4;
 int index_led = 0;
-int led_buffer[10] = {1,2,3,4,5,6,7,8,9,10};
+int led_buffer[4] = {1,2,3,4};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,6 +55,7 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 void display7SEG(int);
 void update7SEG(int);
+void updateClockBuffer(int, int);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -97,22 +98,51 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer1(50); // Meaning: Callback in 10 ms, to delay 1 sec needs 10 x 100 = 1000ms
-  setTimer2(100);
-  setTimer3(50);
-
+  setTimer0(1000); // Meaning: Callback in 10 ms, to delay 1 sec needs 10 x 100 = 1000ms
+  setTimer1(1000);
+  setTimer2(1000);
+//  setTimer3(100);
+  int hour = 15, minute = 8, second = 50;
   while (1)
   {
+	  if (timer0_flag == 1) {
+		  if (second >= 60) {
+			  second = 0;
+			  minute++;
+		  }
+		  if (minute >= 60) {
+			  minute = 0;
+			  hour++;
+		  }
+		  if (hour >= 24) {
+			  hour = 0;
+		  }
+		  second++;
+		  updateClockBuffer(hour, minute);
+		  setTimer0(1000);
+	  }
 	  if (timer1_flag == 1) {
-		  setTimer1(50);
-		  update7SEG(index_led++);
-		  if (index_led == MAX_LED) index_led = 0;
+		  update7SEG(index_led);
+		  if (index_led >= 3) {
+			  index_led = 0;
+		  } else {
+			  index_led++;
+		  }
+		  setTimer1(1000);
 	  }
 	  if (timer2_flag == 1) {
-		  setTimer2(100);
 		  HAL_GPIO_TogglePin(RLED_PORT, RLED1);
 		  HAL_GPIO_TogglePin(RLED_PORT, DOT);
+		  setTimer2(1000);
 	  }
+//	  if (timer3_flag == 1) {
+//		  updateLEDMatrix()
+//
+//	  }
+
+
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -255,7 +285,6 @@ void display7SEG(int num) {
 	HAL_GPIO_WritePin(GPIOB,led[num],0);
 }
 
-
 void update7SEG(int index) {
 	/**
 	 *  Function to update the state of 7SEG LEDs configuration
@@ -279,7 +308,20 @@ void update7SEG(int index) {
 		HAL_GPIO_WritePin(EN_PORT, EN3, 0);
 		// Display the 4th 7SEG with led_buffer[3]
 		break;
+	default:
+		break;
 	}
+}
+
+void updateClockBuffer(int hour, int minute) {
+	/**
+	 * Display the corresponding time based on hour and minute 12:23
+	 */
+	 led_buffer[0] = hour / 10;
+	 led_buffer[1] = hour % 10;
+	 led_buffer[2] = minute / 10;
+	 led_buffer[3] = minute % 10;
+
 }
 /* USER CODE END 4 */
 

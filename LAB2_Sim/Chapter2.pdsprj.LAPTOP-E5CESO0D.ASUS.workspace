@@ -1,8 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <WORKSPACE>
- <FRAME activewindow="0">
-  <PLACEMENT>2c0000000200000003000000ffffffffffffffffffffffffffffffffcdffffff96000000db0500007a040000</PLACEMENT>
+ <FRAME activewindow="1">
+  <PLACEMENT>2c00000002000000030000000083ffff0083ffffffffffffffffffffcdffffff96000000db0500007a040000</PLACEMENT>
   <WINDOW type="default" module="ISIS"/>
+  <WINDOW type="default" module="VSMDEBUG"/>
  </FRAME>
  <MODULE name="VSMDEBUG">
   <PWI>
@@ -332,7 +333,7 @@
      <ITEM name="TopLineAddress">E000E000</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="600" x="688" flags="0000002b" y="620" h="400" pid="100" iid="1">
+   <POPUP w="600" x="534" flags="0000002a" y="420" h="400" pid="100" iid="1">
     <PROPERTIES>
      <ITEM name="CaseSensitive">No</ITEM>
      <ITEM name="DISPADDRS">Yes</ITEM>
@@ -343,7 +344,7 @@
      <ITEM name="nBreakpoints">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="300" x="708" flags="0000000b" y="720" h="300" pid="101" iid="1">
+   <POPUP w="300" x="708" flags="0000000a" y="720" h="300" pid="101" iid="1">
     <PROPERTIES>
      <ITEM name="Address Column Width">93</ITEM>
      <ITEM name="AutoResize">No</ITEM>
