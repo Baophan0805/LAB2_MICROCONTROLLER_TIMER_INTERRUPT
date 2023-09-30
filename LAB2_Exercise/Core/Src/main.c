@@ -50,9 +50,8 @@ TIM_HandleTypeDef htim2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
-void display7SEG(int num);
 /* USER CODE BEGIN PFP */
-
+void display7SEG(int);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -96,26 +95,40 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   setTimer1(50); // Meaning: Callback in 10 ms, to delay 1 sec needs 10 x 100 = 1000ms
+  setTimer2(100);
   int led = 0;
   while (1)
   {
 	  if (timer1_flag == 1) {
-		  HAL_GPIO_TogglePin(RLED_PORT, RLED1);
+		  setTimer1(50);
+		  HAL_GPIO_WritePin(EN_PORT, EN0|EN1|EN2|EN3, 1);
 		  switch(led) {
 		  case 0:
 			  led = 1;
 			  display7SEG(1);
 			  HAL_GPIO_WritePin(EN_PORT, EN0, 0);
-			  HAL_GPIO_WritePin(EN_PORT, EN1, 1);
 			  break;
 		  case 1:
-			  led = 0;
+			  led = 2;
 			  display7SEG(2);
-			  HAL_GPIO_WritePin(EN_PORT, EN0, 1);
 			  HAL_GPIO_WritePin(EN_PORT, EN1, 0);
 			  break;
+		  case 2:
+			  led = 3;
+			  display7SEG(3);
+			  HAL_GPIO_WritePin(EN_PORT, EN2, 0);
+			  break;
+		  case 3:
+			  led = 0;
+			  display7SEG(0);
+			  HAL_GPIO_WritePin(EN_PORT, EN3, 0);
+			  break;
 		  }
-		  setTimer1(50);
+	  }
+	  if (timer2_flag == 1) {
+		  setTimer2(100);
+		  HAL_GPIO_TogglePin(RLED_PORT, RLED1);
+		  HAL_GPIO_TogglePin(RLED_PORT, DOT);
 	  }
     /* USER CODE END WHILE */
 
@@ -218,14 +231,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
+                          |GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_SET);
+                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PA5 PA6 PA7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
+  /*Configure GPIO pins : PA4 PA5 PA6 PA7
+                           PA8 PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7
+                          |GPIO_PIN_8|GPIO_PIN_9;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

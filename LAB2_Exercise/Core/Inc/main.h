@@ -43,10 +43,14 @@ extern "C" {
 
 #define RLED_PORT GPIOA
 #define RLED1 GPIO_PIN_5
+#define DOT GPIO_PIN_4
 
 #define EN_PORT GPIOA
 #define EN0 GPIO_PIN_6
 #define EN1 GPIO_PIN_7
+#define EN2 GPIO_PIN_8
+#define EN3 GPIO_PIN_9
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
