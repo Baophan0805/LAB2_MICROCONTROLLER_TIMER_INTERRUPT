@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "software_timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +50,7 @@ TIM_HandleTypeDef htim2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
+void display7SEG(int num);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -90,13 +91,32 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  setTimer1(50); // Meaning: Callback in 10 ms, to delay 1 sec needs 10 x 100 = 1000ms
+  int led = 0;
   while (1)
   {
+	  if (timer1_flag == 1) {
+		  HAL_GPIO_TogglePin(RLED_PORT, RLED1);
+		  switch(led) {
+		  case 0:
+			  led = 1;
+			  display7SEG(1);
+			  HAL_GPIO_WritePin(EN_PORT, EN0, 0);
+			  HAL_GPIO_WritePin(EN_PORT, EN1, 1);
+			  break;
+		  case 1:
+			  led = 0;
+			  display7SEG(2);
+			  HAL_GPIO_WritePin(EN_PORT, EN0, 1);
+			  HAL_GPIO_WritePin(EN_PORT, EN1, 0);
+			  break;
+		  }
+		  setTimer1(50);
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -195,31 +215,46 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIO_Output_GPIO_Port, GPIO_Output_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_SET);
 
-  /*Configure GPIO pin : GPIO_Output_Pin */
-  GPIO_InitStruct.Pin = GPIO_Output_Pin;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
+                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : PA5 PA6 PA7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIO_Output_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PB0 PB1 PB2 PB3
+                           PB4 PB5 PB6 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3
+                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
 /* USER CODE BEGIN 4 */
-int counter = 100;
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-	counter--;
-	if (counter <= 0) {
-		counter = 100;
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 
-	}
+
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*htim) {
+	timerRun();
 }
 
+void display7SEG(int num) {
+	HAL_GPIO_WritePin(GPIOB, 0xffff, 1);
+	const uint8_t led[10] = {0x3f, 0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+	HAL_GPIO_WritePin(GPIOB,led[num],0);
+}
 /* USER CODE END 4 */
 
 /**

@@ -32,7 +32,21 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#define SEG_PORT GPIOB
+#define SEG0 GPIO_PIN_0
+#define SEG1 GPIO_PIN_1
+#define SEG2 GPIO_PIN_2
+#define SEG3 GPIO_PIN_3
+#define SEG4 GPIO_PIN_4
+#define SEG5 GPIO_PIN_5
+#define SEG6 GPIO_PIN_6
 
+#define RLED_PORT GPIOA
+#define RLED1 GPIO_PIN_5
+
+#define EN_PORT GPIOA
+#define EN0 GPIO_PIN_6
+#define EN1 GPIO_PIN_7
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -58,8 +72,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define GPIO_Output_Pin GPIO_PIN_5
-#define GPIO_Output_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
