@@ -804,7 +804,7 @@ void updateLEDMatrix(int index) {
  8000592:	b084      	sub	sp, #16
  8000594:	af00      	add	r7, sp, #0
  8000596:	6078      	str	r0, [r7, #4]
-	 // Increment row
+	 // process 1 column, with index
 	 HAL_GPIO_WritePin(ROW_PORT, ROW0|ROW1|ROW2|ROW3|ROW4|ROW5|ROW6|ROW7, 1); // Enable signal
  8000598:	2201      	movs	r2, #1
  800059a:	f44f 417f 	mov.w	r1, #65280	; 0xff00
