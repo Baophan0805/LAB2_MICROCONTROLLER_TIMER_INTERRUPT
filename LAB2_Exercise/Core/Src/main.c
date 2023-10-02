@@ -50,6 +50,7 @@ int led_buffer[4] = {1,2,3,4};
 const int MAX_LED_MATRIX = 8;
 int index_led_matrix = 0;
 uint8_t matrix_buffer[8] = {0x01, 0x06, 0x38, 0xC8, 0xC8, 0x38, 0x06, 0x01};
+uint8_t A[8] = {0x01, 0x06, 0x38, 0xC8, 0xC8, 0x38, 0x06, 0x01};
 uint16_t row_pin[8] = {ROW0,ROW1,ROW2,ROW3,ROW4,ROW5,ROW6,ROW7};
 uint16_t col_pin[8] = {ENM0,ENM1,ENM2,ENM3,ENM4,ENM5,ENM6,ENM7};
 
@@ -64,6 +65,7 @@ void display7SEG(int);
 void update7SEG(int);
 void updateClockBuffer(int, int);
 void updateLEDMatrix(int);
+void shiftRightLEDMatrix();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -136,6 +138,7 @@ int main(void)
 		  } else {
 			  index_led++;
 		  }
+		  shiftRightLEDMatrix();
 		  setTimer1(100);
 	  }
 	  if (timer2_flag == 1) {
@@ -150,7 +153,7 @@ int main(void)
 		  } else {
 			  index_led_matrix++;
 		  }
-		  setTimer3(1);
+		  setTimer3(3);
 	  }
     /* USER CODE END WHILE */
 
@@ -354,7 +357,61 @@ void updateLEDMatrix(int index) {
 		 }
 	}
 	HAL_GPIO_WritePin(ENM_PORT, col_pin[index], 0);
+
 }
+
+void shiftRightLEDMatrix() {
+	// Animation on LED Matrix
+	static int shamt = 0; // store the value of shamt in the MAIN program
+	for (int i=0; i < 8; i++) {
+		if (0<=i-shamt && i-shamt <= MAX_LED_MATRIX) {
+			matrix_buffer[i] = A[i-shamt];
+		} else {
+			matrix_buffer[i] = 0x00;
+		}
+	}
+	shamt++;
+	if (shamt == MAX_LED_MATRIX) {
+		shamt -= 8;
+	}
+}
+
+
+//void updateLEDMatrix(int index, int j) {
+//	 // process 1 column, with index
+//     int pos = index % 8;
+//	 HAL_GPIO_WritePin(ROW_PORT, ROW0|ROW1|ROW2|ROW3|ROW4|ROW5|ROW6|ROW7, 1); // Enable signal
+//	 HAL_GPIO_WritePin(ENM_PORT, ENM0|ENM1|ENM2|ENM3|ENM4|ENM5|ENM6|ENM7, 1);
+//	 for (int i=0; i<8; i++) {
+//		 if (matrix_buffer[pos] & (0x80 >> i)) {
+//			 HAL_GPIO_WritePin(ROW_PORT, row_pin[i], 0);
+//		 }
+//	}
+//	HAL_GPIO_WritePin(ENM_PORT, col_pin[(pos+j)%8], 0);
+//}
+
+//void updateLEDMatrix(int index, int j) {
+//	 // process 1 column, with index
+//	 int pos = index % 8;
+//     for (int k=0; k<8;k++) {
+//	 HAL_GPIO_WritePin(ENM_PORT, ENM0|ENM1|ENM2|ENM3|ENM4|ENM5|ENM6|ENM7, 1);
+//	 HAL_GPIO_WritePin(ROW_PORT, ROW0|ROW1|ROW2|ROW3|ROW4|ROW5|ROW6|ROW7, 1); // Enable signal
+//    	 pos = index % 8;
+//		 for (int i=0; i<8; i++) {
+//			 if (matrix_buffer[pos] & (0x80 >> i)) {
+//				 HAL_GPIO_WritePin(ROW_PORT, row_pin[i], 0);
+//			 }
+//		}
+//		HAL_GPIO_WritePin(ENM_PORT, col_pin[(pos+j)%8], 0);
+//		pos++;
+//     }
+//}
+// shift right
+//void shiftRightLEDMatrix(int index) {
+//	for (int j = 0; j < 8 ; j++) { // Loop 8 times
+//		updateLEDMatrix(index,j);
+//	}
+//}
 /* USER CODE END 4 */
 
 /**
